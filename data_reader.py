@@ -23,13 +23,16 @@ class DataReader():
         self.features_shape = (11,)
 
 
-    def get_file_list(self):
+    def get_file_list(self,tag=None):
         ''' return *sorted* recursive file-list in self.path '''
         flist = []
         for path, _, _ in os.walk(self.path, followlinks=True):
             if "MAYBE_BROKEN" in path:
                 continue
-            flist += glob.glob(path + '/' + '*.h5')
+            if tag != None:
+                flist += glob.glob(path + '/' + tag + '/' + '*.h5')
+            else: 
+                flist += glob.glob(path + '/' + '*.h5')
         flist.sort()
         return flist
 
@@ -211,13 +214,13 @@ class DataReader():
         return features
 
 
-    def read_jet_features_from_dir(self, read_n=None, features_to_df=False, **cuts):
+    def read_jet_features_from_dir(self, read_n=None, features_to_df=False, tag = None, **cuts):
         ''' reading only dijet feature data from directory '''
         print('[DataReader] read_jet_features_from_dir(): reading {} events from {}'.format((read_n or 'all'), self.path))
 
         features_concat = []
         n = 0
-        flist = self.get_file_list()
+        flist = self.get_file_list(tag)
         #print("FILELIST")
         #print(flist)
         for i_file, fname in enumerate(flist):
